@@ -3,8 +3,9 @@ mod utils;
 mod encrypter;
 
 fn main() {
-    // gui::main_frame::main_frame();
+    gui::main_frame::main_frame();
 
+    /*
     let password = "1IY@AkB!Hi^Y2q6>K{)RgLw";
     let logger = encrypter::log_encryption::LogEncryption::new(password);
 
@@ -15,5 +16,5 @@ fn main() {
     match logger.decrypt(&token) {
         Ok(pt) => println!("Mensaje descifrado: {}", pt),
         Err(_) => println!("Fallo en la verificación de autenticidad"),
-    }
+    } */
 }
