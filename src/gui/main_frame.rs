@@ -120,7 +120,7 @@ pub fn main_frame() {
 
     // Usamos app::add_idle para revisar el canal y actualizar el reloj
     let mut clock_clone = clock_frame.clone();
-    app::add_idle(move || {
+    app::add_idle3(move |_| {
         if let Ok(time_str) = rx.try_recv() {
             clock_clone.set_label(&time_str);
         }
