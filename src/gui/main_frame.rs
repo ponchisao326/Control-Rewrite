@@ -7,6 +7,8 @@ use fltk::{
     prelude::*,
     window::Window,
 };
+use std::sync::mpsc;
+use std::thread;
 use std::time::{SystemTime, UNIX_EPOCH};
 use crate::gui::ventana_login::VentanaLogin;
 
@@ -97,23 +99,37 @@ pub fn main_frame() {
     // Callback para el botón Salir
     btn_exit.set_callback(move |_| app.quit());
 
-    // Idle callback: actualiza posición de ventana y reloj cada 0.5s
+    // Canal para comunicar el hilo del reloj con la GUI
+    let (tx, rx) = mpsc::channel::<String>();
+    // Hilo para actualizar la hora cada 0.5s
+    thread::spawn(move || {
+        loop {
+            let now = SystemTime::now()
+                .duration_since(UNIX_EPOCH)
+                .unwrap()
+                .as_secs();
+            let hours = (now / 3600 % 24) as u8;
+            let minutes = ((now / 60) % 60) as u8;
+            let time_str = format!("{:02}:{:02}", hours, minutes);
+            if tx.send(time_str).is_err() {
+                break;
+            }
+            thread::sleep(std::time::Duration::from_millis(500));
+        }
+    });
+
+    // Usamos app::add_idle para revisar el canal y actualizar el reloj
     let mut clock_clone = clock_frame.clone();
-    app::add_idle3(move |_| {
+    app::add_idle(move || {
+        if let Ok(time_str) = rx.try_recv() {
+            clock_clone.set_label(&time_str);
+        }
+        // También actualiza la posición de la ventana
         let (sw, sh) = app::screen_size();
         wind.set_pos(sw as i32 - win_w - 10, sh as i32 - win_h - 40);
-
-        let now = SystemTime::now()
-            .duration_since(UNIX_EPOCH)
-            .unwrap()
-            .as_secs();
-        let hours = (now / 3600 % 24) as u8;
-        let minutes = ((now / 60) % 60) as u8;
-        clock_clone.set_label(&format!("{:02}:{:02}", hours, minutes));
-
-        app::sleep(0.5);
     });
 
     // Ejecuta el bucle principal de la app
     app.run().unwrap();
 }
+
