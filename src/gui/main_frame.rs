@@ -15,7 +15,7 @@ pub fn main_frame() {
     // Obtener dimensiones de la pantalla
     let (screen_w, screen_h) = app::screen_size();
     let win_w = 200;
-    let win_h = 250;
+    let win_h = 200;
     let x_pos = screen_w as i32 - win_w - 10; // 10px de margen derecho
     let y_pos = screen_h as i32 - win_h - 40; // 40px de margen inferior
 
