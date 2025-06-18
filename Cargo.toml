@@ -9,3 +9,4 @@ fltk = { version = "1.5.9", features = ["fltk-bundled", "no-pango"] }
 fernet = "0.2.2"
 ring = "0.17.14"
 data-encoding = "2.9.0"
+chrono = "0.4.41"
